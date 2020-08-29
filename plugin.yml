@@ -1,0 +1,7 @@
+name: RaftMC-Core
+main: com.raftmc.core.Main
+version: 1.0
+author: RaftMC
+description: RaftMC Core Plugin
+website: RaftMC.com
+commands:
