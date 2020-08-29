@@ -21,8 +21,9 @@ public class RaftPlayer implements ConfigurationSerializable {
 	private int xp;
 	private int skillPoints;
 	private SkillTree skillTree;
+	private Raft raft;
 	
-	public RaftPlayer(Player player, int level, int xp, double balance, int skillPoints, SkillTree skillTree) {
+	public RaftPlayer(Player player, int level, int xp, double balance, int skillPoints, SkillTree skillTree, Raft raft) {
 		
 		this.player = player;
 		this.level = level;
@@ -30,12 +31,14 @@ public class RaftPlayer implements ConfigurationSerializable {
 		this.balance = balance;
 		this.skillPoints = skillPoints;
 		this.skillTree = skillTree;
+		this.raft = raft;
 		
 	}
 	
+	//For new players
 	public RaftPlayer(Player player) {
 
-		this(player, 1, 0, 0, 0, new SkillTree());
+		this(player, 1, 0, 0, 0, new SkillTree(), null);
 		
 	}
 	
@@ -75,12 +78,15 @@ public class RaftPlayer implements ConfigurationSerializable {
 		
 	}
 	
+	public Raft getRaft() {
+		
+		return raft;
+		
+	}
+	
 	public void setXp(int value) {
 		
-		XpChangeEvent event = new XpChangeEvent(this, xp, value);
-		Main.getPlugin().getListenerManger().fireEvent(event);
-		
-		if(!event.isCancelled()) {
+		if(Main.getPlugin().getListenerManger().fireEvent(new XpChangeEvent(this, xp, value))) {
 			xp = value;
 		}
 		
@@ -88,10 +94,7 @@ public class RaftPlayer implements ConfigurationSerializable {
 	
 	public void setLevel(int value) {
 		
-		LevelChangeEvent event = new LevelChangeEvent(this, level, value);
-		Main.getPlugin().getListenerManger().fireEvent(event);
-		
-		if(!event.isCancelled()) {
+		if(Main.getPlugin().getListenerManger().fireEvent(new LevelChangeEvent(this, level, value))) {
 			level = value;
 		}
 		
@@ -99,10 +102,7 @@ public class RaftPlayer implements ConfigurationSerializable {
 	
 	public void setBalance(double value) {
 		
-		BalanceChangeEvent event = new BalanceChangeEvent(this, balance, value);
-		Main.getPlugin().getListenerManger().fireEvent(event);
-		
-		if(!event.isCancelled()) {
+		if(Main.getPlugin().getListenerManger().fireEvent(new BalanceChangeEvent(this, balance, value))) {
 			balance = value;
 		}
 		
@@ -110,12 +110,15 @@ public class RaftPlayer implements ConfigurationSerializable {
 	
 	public void setSkillPoints(int value) {
 		
-		SkillPointsChangeEvent event = new SkillPointsChangeEvent(this, skillPoints, value);
-		Main.getPlugin().getListenerManger().fireEvent(event);
-		
-		if(!event.isCancelled()) {
+		if(Main.getPlugin().getListenerManger().fireEvent(new SkillPointsChangeEvent(this, skillPoints, value))) {
 			skillPoints = value;
 		}
+		
+	}
+	
+	public void setRaft(Raft raft) {
+		
+		this.raft = raft;
 		
 	}
 	
@@ -136,7 +139,7 @@ public class RaftPlayer implements ConfigurationSerializable {
 	
 	public static RaftPlayer deserialize(Map<String, Object> map) {
 		
-		return new RaftPlayer(Bukkit.getPlayer((UUID) map.get("playerUUID")), (int) map.get("level"), (int) map.get("xp"), (double) map.get("balance"), (int) map.get("skillPoints"), (SkillTree) map.get("skillTree"));
+		return new RaftPlayer(Bukkit.getPlayer((UUID) map.get("playerUUID")), (int) map.get("level"), (int) map.get("xp"), (double) map.get("balance"), (int) map.get("skillPoints"), (SkillTree) map.get("skillTree"), (Raft) map.get("raft"));
 		
 	}
 	

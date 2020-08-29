@@ -29,7 +29,7 @@ public class ListenerManager {
 		
 	}
 	
-	public void fireEvent(Event event) {
+	public boolean fireEvent(Event event) {
 		
 		for(EventListener listener : listeners) {
 				try {
@@ -39,7 +39,14 @@ public class ListenerManager {
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 				}
+				
+				if(event.isCancelled()) {
+					break;
+				}
+				
 		}
+		
+		return event.isCancelled();
 		
 	}
 	

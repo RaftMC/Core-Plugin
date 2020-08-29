@@ -7,9 +7,12 @@ import java.util.UUID;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.raftmc.core.events.ListenerManager;
+import com.raftmc.core.utils.Area;
+import com.raftmc.core.utils.Point;
 
 public class Main extends JavaPlugin{
 
@@ -18,6 +21,7 @@ public class Main extends JavaPlugin{
 	private FileConfiguration playersConfig;
 	private static Main main;
 	private ListenerManager listenerManager;
+	private RaftManager raftManager;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -25,7 +29,15 @@ public class Main extends JavaPlugin{
 		
 		main = this;
 		
+		ConfigurationSerialization.registerClass(RaftPlayer.class);
+		ConfigurationSerialization.registerClass(Raft.class);
+		ConfigurationSerialization.registerClass(SkillTree.class);
+		ConfigurationSerialization.registerClass(Area.class);
+		ConfigurationSerialization.registerClass(Point.class);
+		
 		listenerManager = new ListenerManager();
+		
+		raftManager = new RaftManager();
 		
 		playersFile = new File(getDataFolder() + File.separator + "players");
 		
@@ -83,6 +95,12 @@ public class Main extends JavaPlugin{
 	public ListenerManager getListenerManger() {
 		
 		return listenerManager;
+		
+	}
+	
+	public RaftManager getRaftManager() {
+		
+		return raftManager;
 		
 	}
 	
