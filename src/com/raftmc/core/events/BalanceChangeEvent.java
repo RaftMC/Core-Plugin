@@ -34,4 +34,10 @@ public class BalanceChangeEvent extends Event{
 		
 	}
 	
+	public void setNewBalance(double value) {
+		
+		newBalance = value;
+		
+	}
+	
 }

@@ -1,12 +1,7 @@
 package com.raftmc.core;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.UUID;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,14 +11,11 @@ import com.raftmc.core.utils.Point;
 
 public class Main extends JavaPlugin{
 
-	private ArrayList<RaftPlayer> raftPlayers;
-	private File playersFile;
-	private FileConfiguration playersConfig;
 	private static Main main;
+	private RaftPlayerManager raftPlayerManager;
 	private ListenerManager listenerManager;
 	private RaftManager raftManager;
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnable() {
 		
@@ -35,61 +27,18 @@ public class Main extends JavaPlugin{
 		ConfigurationSerialization.registerClass(Area.class);
 		ConfigurationSerialization.registerClass(Point.class);
 		
+		raftPlayerManager = new RaftPlayerManager();
+		
 		listenerManager = new ListenerManager();
 		
 		raftManager = new RaftManager();
 		
-		playersFile = new File(getDataFolder() + File.separator + "players");
-		
-		try {
-			playersFile.createNewFile();
-		} catch (IOException e) {
-			getLogger().warning("Error while creating the players file.");
-			e.printStackTrace();
-		}
-		
-		playersConfig = YamlConfiguration.loadConfiguration(playersFile);
-		
-		if(playersConfig.isSet("raftPlayers")) {
-			raftPlayers = (ArrayList<RaftPlayer>) playersConfig.getList("raftPlayers");
-		}else {
-			raftPlayers = new ArrayList<RaftPlayer>();
-		}
-		
 	}
 	
-	public ArrayList<RaftPlayer> getRaftPlayers() {
+	public RaftPlayerManager getRaftPlayerManager() {
 		
-		return raftPlayers;
+		return raftPlayerManager;
 		
-	}
-	
-	public RaftPlayer getRaftPlayer(UUID uuid) {
-
-		for (RaftPlayer player : raftPlayers) {
-
-			if (player.getPlayer().getUniqueId().equals(uuid)) {
-				return player;
-			}
-
-		}
-
-		return null;
-
-	}
-	
-	public RaftPlayer getRaftPlayer(String name) {
-
-		for (RaftPlayer player : raftPlayers) {
-
-			if (player.getPlayer().getName().equals(name)) {
-				return player;
-			}
-
-		}
-
-		return null;
-
 	}
 	
 	public ListenerManager getListenerManger() {
@@ -106,13 +55,11 @@ public class Main extends JavaPlugin{
 	
 	@Override
 	public void onDisable() {
-
-		playersConfig.set("raftPlayers", raftPlayers);
 		
 		try {
-			playersConfig.save(playersFile);
+			raftPlayerManager.saveFile();
 		} catch (IOException e) {
-			getLogger().warning("Error while trying to save config.");
+			getLogger().warning("Error while trying to save raft player file. (onDisable)");
 			e.printStackTrace();
 		}
 

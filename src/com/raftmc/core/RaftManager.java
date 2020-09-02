@@ -18,11 +18,11 @@ public class RaftManager {
 	
 	public Raft getRaftAt(Point point) {
 		
-		for(RaftPlayer raftPlayer : Main.getPlugin().getRaftPlayers()) {
+		for(RaftPlayer raftPlayer : Main.getPlugin().getRaftPlayerManager().getRaftPlayers()) {
 			
 			if(raftPlayer.getRaft() != null) {
 				
-				if(raftPlayer.getRaft().getArea().containsPoint(point)) {
+				if(raftPlayer.getRaft().getTotalArea().containsPoint(point)) {
 					
 					return raftPlayer.getRaft();
 					
@@ -40,18 +40,18 @@ public class RaftManager {
 		
 		Point highestCenterPoint = new Point(0, 0);
 		
-		for(RaftPlayer raftPlayer : Main.getPlugin().getRaftPlayers()) {
+		for(RaftPlayer raftPlayer : Main.getPlugin().getRaftPlayerManager().getRaftPlayers()) {
 			if(raftPlayer.getRaft() != null) {
 				
 				Raft raft = raftPlayer.getRaft();
 				
-				if(raft.getArea().getCenter().getZ() > highestCenterPoint.getZ()) {
+				if(raft.getTotalArea().getCenter().getZ() > highestCenterPoint.getZ()) {
 					
-					highestCenterPoint = raft.getArea().getCenter().clone();
+					highestCenterPoint = raft.getTotalArea().getCenter().clone();
 					
-				}else if(raft.getArea().getCenter().getZ() == highestCenterPoint.getZ() && raft.getArea().getCenter().getX() > highestCenterPoint.getX()) {
+				}else if(raft.getTotalArea().getCenter().getZ() == highestCenterPoint.getZ() && raft.getTotalArea().getCenter().getX() > highestCenterPoint.getX()) {
 					
-					highestCenterPoint = raft.getArea().getCenter().clone();
+					highestCenterPoint = raft.getTotalArea().getCenter().clone();
 					
 				}
 			}
@@ -63,7 +63,7 @@ public class RaftManager {
 	
 	public Point getNextRaftCenterPoint() {
 		
-		Point raftCenter = getHighestRaft().getArea().getCenter();
+		Point raftCenter = getHighestRaft().getTotalArea().getCenter();
 		
 		if(raftCenter == null) {
 			return new Point(0, 0);
@@ -86,7 +86,13 @@ public class RaftManager {
 	
 	public Raft newRaft() {
 		
-		return new Raft(new Area(getNextRaftCenterPoint(), 64), getNextRaftCenterPoint().toLocation(raftWorld, 64));
+		return new Raft(new Area(getNextRaftCenterPoint(), 64), new Area(getNextRaftCenterPoint(), 32), getNextRaftCenterPoint().toLocation(raftWorld, 64));
+		
+	}
+	
+	public void deleteRaft(Raft raft) {
+		
+		//TODO Reset Blocks in Raft
 		
 	}
 	

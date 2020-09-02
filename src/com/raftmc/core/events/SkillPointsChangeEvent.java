@@ -34,4 +34,10 @@ public class SkillPointsChangeEvent extends Event{
 		
 	}
 	
+	public void setNewSkillPoints(int value) {
+		
+		newSkillPoints = value;
+		
+	}
+	
 }

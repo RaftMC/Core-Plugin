@@ -7,12 +7,14 @@ public class LevelChangeEvent extends Event{
 	private RaftPlayer raftPlayer;
 	private int oldLevel;
 	private int newLevel;
+	private boolean addXp;
 	
-	public LevelChangeEvent(RaftPlayer raftPlayer, int oldLevel, int newLevel) {
+	public LevelChangeEvent(RaftPlayer raftPlayer, int oldLevel, int newLevel, boolean addXp) {
 		
 		this.raftPlayer = raftPlayer;
 		this.oldLevel = oldLevel;
 		this.newLevel = newLevel;
+		this.addXp = addXp;
 		
 	}
 	
@@ -31,6 +33,24 @@ public class LevelChangeEvent extends Event{
 	public int getNewLevel() {
 		
 		return newLevel;
+		
+	}
+	
+	public boolean isAddingXp() {
+		
+		return addXp;
+		
+	}
+	
+	public void setAddXp(boolean value) {
+		
+		addXp = value;
+		
+	}
+	
+	public void setNewLevel(int value) {
+		
+		newLevel = value;
 		
 	}
 	

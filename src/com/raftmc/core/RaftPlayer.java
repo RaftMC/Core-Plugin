@@ -18,12 +18,12 @@ public class RaftPlayer implements ConfigurationSerializable {
 	private Player player;
 	private int level;
 	private double balance;
-	private int xp;
+	private long xp;
 	private int skillPoints;
 	private SkillTree skillTree;
 	private Raft raft;
 	
-	public RaftPlayer(Player player, int level, int xp, double balance, int skillPoints, SkillTree skillTree, Raft raft) {
+	public RaftPlayer(Player player, int level, long xp, double balance, int skillPoints, SkillTree skillTree, Raft raft) {
 		
 		this.player = player;
 		this.level = level;
@@ -42,9 +42,9 @@ public class RaftPlayer implements ConfigurationSerializable {
 		
 	}
 	
-	public int getMaxXp() {
+	public long getMaxXp() {
 		
-		return level * 200;
+		return (long) (Math.pow(level, 2) * 2);
 		
 	}
 	
@@ -54,7 +54,7 @@ public class RaftPlayer implements ConfigurationSerializable {
 		
 	}
 	
-	public int getXp() {
+	public long getXp() {
 		
 		return xp;
 		
@@ -84,41 +84,109 @@ public class RaftPlayer implements ConfigurationSerializable {
 		
 	}
 	
-	public void setXp(int value) {
+	protected void setXp(long value) {
 		
-		if(Main.getPlugin().getListenerManger().fireEvent(new XpChangeEvent(this, xp, value))) {
-			xp = value;
-		}
+		xp = value;
 		
 	}
 	
-	public void setLevel(int value) {
+	protected void setLevel(int value) {
 		
-		if(Main.getPlugin().getListenerManger().fireEvent(new LevelChangeEvent(this, level, value))) {
-			level = value;
-		}
+		level = value;
 		
 	}
 	
-	public void setBalance(double value) {
+	protected void setBalance(double value) {
 		
-		if(Main.getPlugin().getListenerManger().fireEvent(new BalanceChangeEvent(this, balance, value))) {
-			balance = value;
-		}
+		balance = value;
 		
 	}
 	
-	public void setSkillPoints(int value) {
+	protected void setSkillPoints(int value) {
 		
-		if(Main.getPlugin().getListenerManger().fireEvent(new SkillPointsChangeEvent(this, skillPoints, value))) {
-			skillPoints = value;
-		}
+		skillPoints = value;
 		
 	}
 	
-	public void setRaft(Raft raft) {
+	protected void setRaft(Raft raft) {
 		
 		this.raft = raft;
+		
+	}
+	
+	public void addXp(long amount, boolean autoLevel) {
+		
+		XpChangeEvent event = new XpChangeEvent(this, xp, xp + amount, autoLevel);
+		
+		if(Main.getPlugin().getListenerManger().fireEvent(event)) {
+			setXp(event.getNewXp());
+			
+			if(xp >= getMaxXp() && event.isAutoLeveling()) {
+				levelUp(false);
+			}
+		}
+		
+	}
+	
+	public void levelUp(boolean addXp) {
+		
+		LevelChangeEvent event = new LevelChangeEvent(this, level, level + 1, addXp);
+		
+		if(Main.getPlugin().getListenerManger().fireEvent(event)) {
+			if(event.isAddingXp()) {
+				addXp(getMaxXp() - xp, false);
+			}
+			
+			setLevel(event.getNewLevel());
+		}
+		
+	}
+	
+	public void addSkillPoints(int amount) {
+		
+		SkillPointsChangeEvent event = new SkillPointsChangeEvent(this, skillPoints, skillPoints + amount);
+		
+		if(Main.getPlugin().getListenerManger().fireEvent(event)) {
+			
+			setSkillPoints(event.getNewSkillPoints());
+			
+		}
+		
+	}
+	
+	public void removeSkillPoints(int amount) {
+		
+		SkillPointsChangeEvent event = new SkillPointsChangeEvent(this, skillPoints, skillPoints - amount);
+		
+		if(Main.getPlugin().getListenerManger().fireEvent(event)) {
+			
+			setSkillPoints(event.getNewSkillPoints());
+			
+		}
+		
+	}
+	
+	public void addBalance(double amount) {
+		
+		BalanceChangeEvent event = new BalanceChangeEvent(this, balance, balance + amount);
+		
+		if(Main.getPlugin().getListenerManger().fireEvent(event)) {
+			
+			setBalance(event.getNewBalance());
+			
+		}
+		
+	}
+	
+	public void removeBalance(double amount) {
+		
+		BalanceChangeEvent event = new BalanceChangeEvent(this, balance, balance - amount);
+		
+		if(Main.getPlugin().getListenerManger().fireEvent(event)) {
+			
+			setBalance(event.getNewBalance());
+			
+		}
 		
 	}
 	
@@ -139,7 +207,7 @@ public class RaftPlayer implements ConfigurationSerializable {
 	
 	public static RaftPlayer deserialize(Map<String, Object> map) {
 		
-		return new RaftPlayer(Bukkit.getPlayer((UUID) map.get("playerUUID")), (int) map.get("level"), (int) map.get("xp"), (double) map.get("balance"), (int) map.get("skillPoints"), (SkillTree) map.get("skillTree"), (Raft) map.get("raft"));
+		return new RaftPlayer(Bukkit.getPlayer((UUID) map.get("playerUUID")), (int) map.get("level"), (long) map.get("xp"), (double) map.get("balance"), (int) map.get("skillPoints"), (SkillTree) map.get("skillTree"), (Raft) map.get("raft"));
 		
 	}
 	
