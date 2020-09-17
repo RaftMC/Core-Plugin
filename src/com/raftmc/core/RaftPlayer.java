@@ -22,6 +22,7 @@ public class RaftPlayer implements ConfigurationSerializable {
 	private int skillPoints;
 	private SkillTree skillTree;
 	private Raft raft;
+	private boolean resourcePackEnabled;
 	
 	public RaftPlayer(Player player, int level, long xp, double balance, int skillPoints, SkillTree skillTree, Raft raft) {
 		
@@ -32,6 +33,7 @@ public class RaftPlayer implements ConfigurationSerializable {
 		this.skillPoints = skillPoints;
 		this.skillTree = skillTree;
 		this.raft = raft;
+		resourcePackEnabled = false;
 		
 	}
 	
@@ -81,6 +83,18 @@ public class RaftPlayer implements ConfigurationSerializable {
 	public Raft getRaft() {
 		
 		return raft;
+		
+	}
+	
+	public boolean getResourcePackEnabled() {
+		
+		return resourcePackEnabled;
+		
+	}
+	
+	public void setResourcePackEnabled(boolean value) {
+		
+		resourcePackEnabled = value;
 		
 	}
 	
